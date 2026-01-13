@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Legacy Drives</title>
+  <style>
+    :root { --border:#e5e7eb; --text:#111827; --muted:#6b7280; --bg:#ffffff; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text); background:var(--bg); }
+    header { padding:24px 20px 10px; border-bottom:1px solid var(--border); }
+    h1 { margin:0; font-size:22px; }
+    .sub { margin:6px 0 0; color:var(--muted); font-size:14px; }
+    .wrap { padding:14px 20px 20px; }
+    .tabs { display:flex; gap:8px; margin-bottom:12px; }
+    .tabbtn {
+      border:1px solid var(--border);
+      background:#f9fafb;
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      color:var(--text);
+    }
+    .tabbtn[aria-selected="true"] { background:#111827; color:#fff; border-color:#111827; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* iframe sizing */
+    .frame {
+      width:100%;
+      height: calc(100vh - 170px);
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+    }
+
+    footer { padding:14px 20px 22px; color:var(--muted); font-size:12px; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Legacy Drives Leaderboards</h1>
+    <div class="sub">Updated daily via GitHub Actions</div>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="Leaderboards">
+      <button class="tabbtn" role="tab" id="tab-regular" aria-controls="panel-regular" aria-selected="true">
+        Regular Season
+      </button>
+      <button class="tabbtn" role="tab" id="tab-post" aria-controls="panel-post" aria-selected="false">
+        Postseason
+      </button>
+    </div>
+
+    <section id="panel-regular" class="panel active" role="tabpanel" aria-labelledby="tab-regular">
+      <iframe class="frame" src="regular.html" title="Regular Season Leaderboard"></iframe>
+    </section>
+
+    <section id="panel-post" class="panel" role="tabpanel" aria-labelledby="tab-post">
+      <iframe class="frame" src="postseason.html" title="Postseason Leaderboard"></iframe>
+    </section>
+  </div>
+
+  <footer>
+    Tip: you can also open <a href="regular.html">regular.html</a> or <a href="postseason.html">postseason.html</a> directly.
+  </footer>
+
+  <script>
+    const tabs = [
+      { btn: document.getElementById('tab-regular'), panel: document.getElementById('panel-regular') },
+      { btn: document.getElementById('tab-post'), panel: document.getElementById('panel-post') },
+    ];
+
+    function activate(index) {
+      tabs.forEach((t, i) => {
+        const selected = i === index;
+        t.btn.setAttribute('aria-selected', String(selected));
+        t.panel.classList.toggle('active', selected);
+      });
+    }
+
+    tabs[0].btn.addEventListener('click', () => activate(0));
+    tabs[1].btn.addEventListener('click', () => activate(1));
+
+    // Optional: allow linking with #post or #regular
+    if (location.hash === '#post') activate(1);
+    if (location.hash === '#regular') activate(0);
+  </script>
+</body>
+</html>
