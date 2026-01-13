@@ -340,12 +340,117 @@ if opportunities:
         }}
         .leaderboard {{
             font-size: 12px;
-            columns: 2;
-            column-gap: 40px;
+            columns: 1;
         }}
         .qb-entry {{
             break-inside: avoid;
             margin-bottom: 3px;
+            cursor: pointer;
+        }}
+        .qb-entry:hover {{
+            text-decoration: underline;
+        }}
+        .search-wrap {{
+            margin: 10px 0 18px;
+            position: relative;
+            max-width: 520px;
+        }}
+        .search-row {{
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }}
+        #playerSearch {{
+            width: 100%;
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            outline: none;
+        }}
+        #clearSearch {{
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            white-space: nowrap;
+        }}
+        #clearSearch:disabled {{
+            opacity: 0.5;
+            cursor: default;
+        }}
+        .search-hint {{
+            font-size: 10px;
+            margin-top: 6px;
+        }}
+        .dropdown {{
+            position: absolute;
+            top: 38px;
+            left: 0;
+            right: 0;
+            border: 1px solid #999;
+            border-radius: 6px;
+            background: #fff;
+            z-index: 50;
+            max-height: 220px;
+            overflow: auto;
+            display: none;
+        }}
+        .dropdown button {{
+            width: 100%;
+            text-align: left;
+            padding: 8px 10px;
+            font-family: inherit;
+            font-size: 12px;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }}
+        .dropdown button:hover {{
+            background: #eee;
+        }}
+        .qb-details {{
+            display: none;
+            margin: 6px 0 10px;
+            padding: 10px;
+            border: 1px solid #999;
+            border-radius: 6px;
+            background: #fafafa;
+            break-inside: avoid;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }}
+        .qb-details table {{
+            width: 100%;
+            min-width: 800px;
+            font-size: 10px;
+            border-collapse: collapse;
+        }}
+        .qb-details th {{
+            text-align: left;
+            padding: 4px;
+            border-bottom: 1px solid #999;
+            font-weight: bold;
+        }}
+        .qb-details td {{
+            padding: 4px;
+            border-bottom: 1px solid #ddd;
+        }}
+        .qb-details tr:last-child td {{
+            border-bottom: none;
+        }}
+        .result-w {{
+            color: #0a7c0a;
+            font-weight: bold;
+        }}
+        .result-l {{
+            color: #c41e3a;
+            font-weight: bold;
         }}
     </style>
 </head>
@@ -368,15 +473,198 @@ if opportunities:
         
         <div class="section-header" style="margin-top: 15px;">Name: LD Successes - LD Failures (Success %)</div>
     </div>
-    
+    <div class="search-wrap">
+        <div class="search-row">
+            <input
+                id="playerSearch"
+                type="text"
+                autocomplete="off"
+                placeholder="Search a QB (e.g., mahomes)"
+            />
+            <button id="clearSearch" type="button" disabled>Clear</button>
+        </div>
+        <div class="search-hint">
+            Start typing to see matching players. Click a name to show only that player.
+        </div>
+        <div id="searchDropdown" class="dropdown"></div>
+    </div>
+
     <div class="leaderboard">
 """
     
-    # Add all QB entries
+    # Add all QB entries with their detail divs
     for _, row in records.iterrows():
-        html_content += f'        <div class="qb-entry">{row["qb_name"]}: {int(row["wins"])} - {int(row["losses"])} ({row["win_pct"]}%)</div>\n'
+        qb_name = row["qb_name"]
+        html_content += f'        <div class="qb-entry" data-qb="{qb_name}">{qb_name}: {int(row["wins"])} - {int(row["losses"])} ({row["win_pct"]}%)</div>\n'
+        html_content += f'        <div class="qb-details" id="details-{qb_name.replace(" ", "-")}"></div>\n'
     
     html_content += """    </div>
+
+<script>
+(function () {
+  const input = document.getElementById("playerSearch");
+  const dropdown = document.getElementById("searchDropdown");
+  const clearBtn = document.getElementById("clearSearch");
+  const entries = Array.from(document.querySelectorAll(".qb-entry"));
+
+  const players = entries.map(el => {
+    const text = el.textContent.trim();
+    return { name: (text.split(":")[0] || "").trim(), el };
+  });
+
+  function normalize(s) {
+    return (s || "").toString().trim().toLowerCase();
+  }
+
+  function showAll() {
+    players.forEach(p => {
+      p.el.style.display = "";
+      const detailsEl = p.el.nextElementSibling;
+      if (detailsEl && detailsEl.classList.contains("qb-details")) {
+        detailsEl.style.display = "none";
+      }
+    });
+    clearBtn.disabled = true;
+  }
+
+  function showOnly(name) {
+    const target = normalize(name);
+    players.forEach(p => {
+      const isMatch = normalize(p.name) === target;
+      p.el.style.display = isMatch ? "" : "none";
+      const detailsEl = p.el.nextElementSibling;
+      if (detailsEl && detailsEl.classList.contains("qb-details")) {
+        detailsEl.style.display = "none";
+      }
+    });
+    clearBtn.disabled = false;
+  }
+
+  input.addEventListener("input", () => {
+    const value = normalize(input.value);
+    dropdown.innerHTML = "";
+
+    if (!value) {
+      showAll();
+      dropdown.style.display = "none";
+      return;
+    }
+
+    const matches = players.filter(p => normalize(p.name).includes(value));
+
+    matches.forEach(p => {
+      const btn = document.createElement("button");
+      btn.textContent = p.name;
+      btn.type = "button";
+      btn.onclick = () => {
+        input.value = p.name;
+        showOnly(p.name);
+        dropdown.style.display = "none";
+      };
+      dropdown.appendChild(btn);
+    });
+
+    dropdown.style.display = matches.length ? "block" : "none";
+  });
+
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    showAll();
+    dropdown.style.display = "none";
+  });
+
+  // Embedded debug data
+  const EMBEDDED_DEBUG_DATA = """ + json.dumps(debug_rows) + """;
+  
+  function loadDebugData() {
+    return EMBEDDED_DEBUG_DATA;
+  }
+
+  entries.forEach(entry => {
+    entry.addEventListener("click", () => {
+      const qbName = entry.getAttribute("data-qb");
+      const detailsId = `details-${qbName.replace(/ /g, "-")}`;
+      const detailsEl = document.getElementById(detailsId);
+      
+      if (!detailsEl) return;
+      
+      // Toggle visibility
+      if (detailsEl.style.display === "block") {
+        detailsEl.style.display = "none";
+        return;
+      }
+      
+      // Close all other details
+      document.querySelectorAll(".qb-details").forEach(el => {
+        el.style.display = "none";
+      });
+      
+      detailsEl.style.display = "block";
+      
+      // Load data
+      const rows = loadDebugData();
+      let qbRows = rows.filter(r => r.qb_name === qbName);
+      if (qbRows.length === 0) {
+        const qbLower = qbName.toLowerCase();
+        qbRows = rows.filter(r => r.qb_name && r.qb_name.toLowerCase() === qbLower);
+      }
+      
+      if (qbRows.length === 0) {
+        detailsEl.innerHTML = "<p>No drives found for this QB.</p>";
+        return;
+      }
+      
+      // Build table
+      let tableHtml = `
+        <table>
+          <thead>
+            <tr>
+              <th>Result</th>
+              <th>Game ID</th>
+              <th>Score Diff</th>
+              <th>Period</th>
+              <th>Time Range</th>
+              <th>Down</th>
+              <th>Yds</th>
+              <th>Final</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      qbRows.forEach(drive => {
+        const resultClass = drive.result === 'W' ? 'result-w' : 'result-l';
+        const timeRange = (drive.start_time && drive.end_time) 
+          ? `${drive.start_time}-${drive.end_time}` 
+          : (drive.start_time || drive.end_time || '');
+        const finalScore = `${drive.end_team_score}-${drive.end_opp_score}`;
+        
+        tableHtml += `
+          <tr>
+            <td class="${resultClass}">${drive.result}</td>
+            <td>${drive.game_id || ''}</td>
+            <td>${drive.start_score_diff || ''}</td>
+            <td>${drive.period || ''}</td>
+            <td>${timeRange}</td>
+            <td>${drive.final_down || ''}</td>
+            <td>${drive.final_ydstogo || ''}</td>
+            <td>${finalScore}</td>
+            <td>${drive.reason || ''}</td>
+          </tr>
+        `;
+      });
+      
+      tableHtml += `
+          </tbody>
+        </table>
+      `;
+      
+      detailsEl.innerHTML = tableHtml;
+    });
+  });
+})();
+</script>
 </body>
 </html>"""
     
