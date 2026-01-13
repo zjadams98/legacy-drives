@@ -1,0 +1,50 @@
+name: Update Legacy Drive Leaderboards
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"   # 12:00 UTC = 6:00 AM Central (CST)
+
+permissions:
+  contents: write
+
+jobs:
+  update-leaderboards:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nfl_data_py pandas
+
+      - name: Run regular season script
+        run: python legacy_drives_html_regular.py
+
+      - name: Run postseason script
+        run: python legacy_drives_html_postseason.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add *.html *.json || true
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Update leaderboards (auto)"
+          git push
