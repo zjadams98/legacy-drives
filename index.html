@@ -115,27 +115,20 @@
     /* iframe sizing */
     .frame {
       width:100%;
-      height: calc(100vh - 280px);
+      height: 875px;
       border:1px solid var(--border);
       border-radius:var(--radius);
       background:#fff;
     }
 
     @media (max-width: 520px) {
-      h1 {
-        font-size: 32px;
-      }
-      .card {
-        padding: 10px;
-        margin-bottom: 8px;
-      }
-      .card p {
-        font-size: 13px;
-      }
-      .frame {
-        height: calc(100vh - 180px);
-      }
-    }
+  h1 { font-size: 32px; }
+
+  /* Give iframe most of the screen */
+  .frame {
+    height: 600px;
+  }
+}
 
     footer { padding:14px 20px 22px; color:var(--muted); font-size:12px; }
     a { color: inherit; }
