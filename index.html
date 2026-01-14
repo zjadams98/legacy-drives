@@ -3,35 +3,127 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Legacy Drives</title>
+  <title>Zach's NFL Stats</title>
   <style>
-    :root { --border:#e5e7eb; --text:#111827; --muted:#6b7280; --bg:#ffffff; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--text); background:var(--bg); }
-    header { padding:24px 20px 10px; border-bottom:1px solid var(--border); }
-    h1 { margin:0; font-size:22px; }
-    .sub { margin:6px 0 0; color:var(--muted); font-size:14px; }
-    .wrap { padding:14px 20px 20px; }
-    .tabs { display:flex; gap:8px; margin-bottom:12px; }
+    :root {
+      --border:#e5e7eb;
+      --text:#111827;
+      --muted:#6b7280;
+      --bg:#ffffff;
+      --tab-bg:#f9fafb;
+      --tab-active:#111827;
+      --tab-active-text:#ffffff;
+      --radius:12px;
+    }
+
+    body {
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    /* Header with blue->white gradient behind the title */
+    header {
+      padding: 28px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #1d4ed8 0%, #60a5fa 45%, #ffffff 100%);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 40px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+
+    .wrap { padding: 14px 20px 20px; }
+
+    /* Tabs */
+    .tabs {
+      display:flex;
+      flex-wrap: wrap;
+      gap:8px;
+      margin-bottom:12px;
+    }
+
     .tabbtn {
       border:1px solid var(--border);
-      background:#f9fafb;
+      background:var(--tab-bg);
       padding:10px 12px;
       border-radius:10px;
       cursor:pointer;
-      font-weight:600;
+      font-weight:700;
       color:var(--text);
     }
-    .tabbtn[aria-selected="true"] { background:#111827; color:#fff; border-color:#111827; }
+
+    .tabbtn[aria-selected="true"] {
+      background:var(--tab-active);
+      color:var(--tab-active-text);
+      border-color:var(--tab-active);
+    }
+
     .panel { display:none; }
     .panel.active { display:block; }
+
+    /* Nested tabs inside Legacy Drives page */
+    .subtabs {
+      display:flex;
+      flex-wrap: wrap;
+      gap:8px;
+      margin: 10px 0 12px;
+    }
+
+    .subtabbtn {
+      border:1px solid var(--border);
+      background:var(--tab-bg);
+      padding:9px 11px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .subtabbtn[aria-selected="true"] {
+      background:var(--tab-active);
+      color:var(--tab-active-text);
+      border-color:var(--tab-active);
+    }
+
+    /* Text blocks where you can write descriptions */
+    .card {
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background:#fff;
+      padding: 14px 14px 12px;
+      margin-bottom: 12px;
+    }
+
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
 
     /* iframe sizing */
     .frame {
       width:100%;
-      height: calc(100vh - 170px);
+      height: calc(100vh - 280px);
       border:1px solid var(--border);
-      border-radius:12px;
+      border-radius:var(--radius);
       background:#fff;
+    }
+
+    @media (max-width: 520px) {
+      h1 { font-size: 32px; }
+      .frame { height: calc(100vh - 310px); }
     }
 
     footer { padding:14px 20px 22px; color:var(--muted); font-size:12px; }
@@ -40,26 +132,60 @@
 </head>
 <body>
   <header>
-    <h1>Legacy Drives Leaderboards</h1>
-    <div class="sub">Updated daily via GitHub Actions</div>
+    <h1>Zach's NFL Stats</h1>
   </header>
 
   <div class="wrap">
-    <div class="tabs" role="tablist" aria-label="Leaderboards">
-      <button class="tabbtn" role="tab" id="tab-regular" aria-controls="panel-regular" aria-selected="true">
-        Regular Season
+    <!-- Top-level tabs -->
+    <div class="tabs" role="tablist" aria-label="Site Sections">
+      <button class="tabbtn" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">
+        Home
       </button>
-      <button class="tabbtn" role="tab" id="tab-post" aria-controls="panel-post" aria-selected="false">
-        Postseason
+      <button class="tabbtn" role="tab" id="tab-legacy" aria-controls="panel-legacy" aria-selected="false">
+        Legacy Drives
       </button>
     </div>
 
-    <section id="panel-regular" class="panel active" role="tabpanel" aria-labelledby="tab-regular">
-      <iframe class="frame" src="regular.html" title="Regular Season Leaderboard"></iframe>
+    <!-- HOME -->
+    <section id="panel-home" class="panel active" role="tabpanel" aria-labelledby="tab-home">
+      <div class="card">
+        <h2>About this site</h2>
+        <p>
+          <!-- Edit this text however you want -->
+          Welcome! This site contains NFL stats and tools I'm building, including the Legacy Drives leaderboards.
+          Add any description, update notes, or links here.
+        </p>
+      </div>
     </section>
 
-    <section id="panel-post" class="panel" role="tabpanel" aria-labelledby="tab-post">
-      <iframe class="frame" src="postseason.html" title="Postseason Leaderboard"></iframe>
+    <!-- LEGACY DRIVES -->
+    <section id="panel-legacy" class="panel" role="tabpanel" aria-labelledby="tab-legacy">
+      <div class="card">
+        <h2>Legacy Drives</h2>
+        <p>
+          <!-- Edit this text however you want -->
+          This section highlights "Legacy Drives" and related leaderboards. Use the tabs below to switch
+          between Regular Season and Post Season.
+        </p>
+      </div>
+
+      <!-- Nested tabs -->
+      <div class="subtabs" role="tablist" aria-label="Legacy Drives Seasons">
+        <button class="subtabbtn" role="tab" id="subtab-regular" aria-controls="subpanel-regular" aria-selected="true">
+          Regular Season
+        </button>
+        <button class="subtabbtn" role="tab" id="subtab-post" aria-controls="subpanel-post" aria-selected="false">
+          Post Season
+        </button>
+      </div>
+
+      <section id="subpanel-regular" class="panel active" role="tabpanel" aria-labelledby="subtab-regular">
+        <iframe class="frame" src="regular.html" title="Regular Season Leaderboard"></iframe>
+      </section>
+
+      <section id="subpanel-post" class="panel" role="tabpanel" aria-labelledby="subtab-post">
+        <iframe class="frame" src="postseason.html" title="Postseason Leaderboard"></iframe>
+      </section>
     </section>
   </div>
 
@@ -68,12 +194,19 @@
   </footer>
 
   <script>
-    const tabs = [
-      { btn: document.getElementById('tab-regular'), panel: document.getElementById('panel-regular') },
-      { btn: document.getElementById('tab-post'), panel: document.getElementById('panel-post') },
+    // Top-level tabs: Home / Legacy Drives
+    const mainTabs = [
+      { btn: document.getElementById('tab-home'), panel: document.getElementById('panel-home') },
+      { btn: document.getElementById('tab-legacy'), panel: document.getElementById('panel-legacy') },
     ];
 
-    function activate(index) {
+    // Nested tabs inside Legacy Drives: Regular / Post Season
+    const legacyTabs = [
+      { btn: document.getElementById('subtab-regular'), panel: document.getElementById('subpanel-regular') },
+      { btn: document.getElementById('subtab-post'), panel: document.getElementById('subpanel-post') },
+    ];
+
+    function activate(tabs, index) {
       tabs.forEach((t, i) => {
         const selected = i === index;
         t.btn.setAttribute('aria-selected', String(selected));
@@ -81,12 +214,33 @@
       });
     }
 
-    tabs[0].btn.addEventListener('click', () => activate(0));
-    tabs[1].btn.addEventListener('click', () => activate(1));
+    // Wire up tab clicks
+    mainTabs[0].btn.addEventListener('click', () => activate(mainTabs, 0));
+    mainTabs[1].btn.addEventListener('click', () => activate(mainTabs, 1));
 
-    // Optional: allow linking with #post or #regular
-    if (location.hash === '#post') activate(1);
-    if (location.hash === '#regular') activate(0);
+    legacyTabs[0].btn.addEventListener('click', () => activate(legacyTabs, 0));
+    legacyTabs[1].btn.addEventListener('click', () => activate(legacyTabs, 1));
+
+    // Optional hash linking:
+    //   #home
+    //   #legacy
+    //   #legacy-regular
+    //   #legacy-post
+    function applyHash() {
+      const h = (location.hash || '').toLowerCase();
+
+      if (h === '#legacy' || h === '#legacy-regular' || h === '#legacy-post') {
+        activate(mainTabs, 1);
+      } else {
+        activate(mainTabs, 0);
+      }
+
+      if (h === '#legacy-post') activate(legacyTabs, 1);
+      else activate(legacyTabs, 0);
+    }
+
+    window.addEventListener('hashchange', applyHash);
+    applyHash();
   </script>
 </body>
 </html>
