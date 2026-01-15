@@ -903,6 +903,7 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       margin: 40px auto;
       line-height: 1.6;
       padding: 0 12px;
+      -webkit-text-size-adjust: 100%;
     }}
     .timestamp {{ 
         font-size: 10px;
@@ -921,6 +922,7 @@ def generate_recent_legacy_drives_html(all_rows: List[LegacyDriveData]) -> str:
       background: #fafafa;
       padding: 10px;
       overflow-x: auto;
+      -webkit-text-size-adjust: none;
     }}
     table {{ width: 100%; min-width: 1100px; font-size: 10px; border-collapse: collapse; }}
     th {{ text-align: left; padding: 4px; border-bottom: 1px solid #999; font-weight: bold; position: sticky; top: 0; background: #fafafa; }}
