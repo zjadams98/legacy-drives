@@ -28,11 +28,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install nfl_data_py pandas
 
-      - name: Run regular season script
-        run: python legacy_drives_html_regular.py
-
-      - name: Run postseason script
-        run: python legacy_drives_html_postseason.py
+      - name: Run legacy drives script
+        run: python legacy_drives.py
 
       - name: Commit and push if changed
         run: |
