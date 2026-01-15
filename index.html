@@ -23,11 +23,10 @@
       background:var(--bg);
     }
 
-    /* Header with blue->white gradient behind the title */
     header {
       padding: 28px 20px 14px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #1d4ed8 0%, #60a5fa 45%, #ffffff 100%);
+      background: linear-gradient(180deg, #1d4ed8 0%, #60a5fa 45%, #cad7ff 100%);
     }
 
     h1 {
@@ -46,6 +45,8 @@
       flex-wrap: wrap;
       gap:8px;
       margin-bottom:12px;
+      display: flex;
+      justify-content: center;
     }
 
     .tabbtn {
@@ -73,6 +74,8 @@
       flex-wrap: wrap;
       gap:8px;
       margin: 10px 0 12px;
+      display: flex;
+      justify-content: center;
     }
 
     .subtabbtn {
@@ -112,7 +115,6 @@
       line-height: 1.45;
     }
 
-    /* iframe sizing */
     .frame {
       width:100%;
       height: 875px;
@@ -124,7 +126,7 @@
     @media (max-width: 520px) {
   h1 { font-size: 32px; }
 
-  /* Give iframe most of the screen */
+
   .frame {
     height: 600px;
   }
@@ -145,7 +147,7 @@
       <button class="tabbtn" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">
         Home
       </button>
-      <button class="tabbtn" role="tab" id="tab-legacy" aria-controls="panel-legacy" aria-selected="false">
+      <button class="tabbtn" role="tab" id="tab-legacy-drives" aria-controls="panel-legacy-drives" aria-selected="false">
         Legacy Drives
       </button>
     </div>
@@ -161,46 +163,51 @@
     </section>
 
     <!-- LEGACY DRIVES -->
-    <section id="panel-legacy" class="panel" role="tabpanel" aria-labelledby="tab-legacy">
-      <div class="card">
-        <h2>Legacy Drives</h2>
-        <p>
-          <!-- Edit this text however you want -->
-          An NFL quarterback has their legacy defined by how well they preform in the biggest moments. Ball in their hands, down one possession, late in the game. These situations are what I have defined as legacy drives and what they do on these drives defines their legacy. This leaderboard tracks just how often and how many times a QB comes through on the drives that matter most.
-        </p>
-      </div>
-
+    <section id="panel-legacy-drives" class="panel" role="tabpanel" aria-labelledby="tab-legacy-drives">
       <!-- Nested tabs -->
       <div class="subtabs" role="tablist" aria-label="Legacy Drives Seasons">
-        <button class="subtabbtn" role="tab" id="subtab-regular" aria-controls="subpanel-regular" aria-selected="true">
+        <button class="subtabbtn" role="tab" id="subtab-LD-about" aria-controls="subpanel-LD-about" aria-selected="true">
+          About
+        </button>
+        <button class="subtabbtn" role="tab" id="subtab-LD-regular" aria-controls="subpanel-LD-regular" aria-selected="true">
           Regular Season
         </button>
-        <button class="subtabbtn" role="tab" id="subtab-post" aria-controls="subpanel-post" aria-selected="false">
+        <button class="subtabbtn" role="tab" id="subtab-LD-post" aria-controls="subpanel-LD-post" aria-selected="false">
           Post Season
         </button>
       </div>
 
-      <section id="subpanel-regular" class="panel active" role="tabpanel" aria-labelledby="subtab-regular">
-        <iframe class="frame" src="regular.html" title="Regular Season Leaderboard"></iframe>
+      <section id="subpanel-LD-about" class="panel active" role="tabpanel" aria-labelledby="subtab-LD-about">
+        <div class="card">
+          <h2>Legacy Drives</h2>
+          <p>
+            An NFL quarterback has their legacy defined by how well they preform in the biggest moments. Ball in their hands, down one possession, late in the game. These situations are what I have defined as legacy drives and what they do on these drives defines their legacy. This leaderboard tracks just how often and how many times a QB comes through on the drives that matter most.
+          </p>
+        </div>
+        <iframe class="frame" src="recent_legacy_drives.html" title="Recent Legacy Drives"></iframe>
+      </section>
+      <section id="subpanel-LD-regular" class="panel" role="tabpanel" aria-labelledby="subtab-LD-regular">
+        <iframe class="frame" src="regular_season_legacy_drives_leaderboard.html" title="Regular Season Leaderboard"></iframe>
       </section>
 
-      <section id="subpanel-post" class="panel" role="tabpanel" aria-labelledby="subtab-post">
-        <iframe class="frame" src="postseason.html" title="Postseason Leaderboard"></iframe>
+      <section id="subpanel-LD-post" class="panel" role="tabpanel" aria-labelledby="subtab-LD-post">
+        <iframe class="frame" src="post_season_legacy_drives_leaderboard.html" title="Postseason Leaderboard"></iframe>
       </section>
     </section>
   </div>
 
   <script>
-    // Top-level tabs: Home / Legacy Drives
+    //Main Tabs
     const mainTabs = [
       { btn: document.getElementById('tab-home'), panel: document.getElementById('panel-home') },
-      { btn: document.getElementById('tab-legacy'), panel: document.getElementById('panel-legacy') },
+      { btn: document.getElementById('tab-legacy-drives'), panel: document.getElementById('panel-legacy-drives') },
     ];
 
-    // Nested tabs inside Legacy Drives: Regular / Post Season
+    // Nested tabs inside Legacy Drives
     const legacyTabs = [
-      { btn: document.getElementById('subtab-regular'), panel: document.getElementById('subpanel-regular') },
-      { btn: document.getElementById('subtab-post'), panel: document.getElementById('subpanel-post') },
+      { btn: document.getElementById('subtab-LD-about'), panel: document.getElementById('subpanel-LD-about') },
+      { btn: document.getElementById('subtab-LD-regular'), panel: document.getElementById('subpanel-LD-regular') },
+      { btn: document.getElementById('subtab-LD-post'), panel: document.getElementById('subpanel-LD-post') },
     ];
 
     function activate(tabs, index) {
@@ -211,18 +218,12 @@
       });
     }
 
-    // Wire up tab clicks
     mainTabs[0].btn.addEventListener('click', () => activate(mainTabs, 0));
     mainTabs[1].btn.addEventListener('click', () => activate(mainTabs, 1));
-
     legacyTabs[0].btn.addEventListener('click', () => activate(legacyTabs, 0));
     legacyTabs[1].btn.addEventListener('click', () => activate(legacyTabs, 1));
+    legacyTabs[2].btn.addEventListener('click', () => activate(legacyTabs, 2));
 
-    // Optional hash linking:
-    //   #home
-    //   #legacy
-    //   #legacy-regular
-    //   #legacy-post
     function applyHash() {
       const h = (location.hash || '').toLowerCase();
 
